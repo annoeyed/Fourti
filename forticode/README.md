@@ -4,7 +4,7 @@
 
 ##  프로젝트 개요
 
-FortiCode는 기존의 SAST/DAST 도구 대신 **LLM(대규모 언어 모델)**을 활용하여 코드의 보안 취약점을 분석하고, 안전한 코드를 생성하는 혁신적인 보안 도구입니다.
+FortiCode는 기존의 SAST/DAST 도구 대신 LLM(대규모 언어 모델)을 활용하여 코드의 보안 취약점을 분석하고, 안전한 코드를 생성하는 혁신적인 보안 도구입니다.
 
 ###  핵심 특징
 
@@ -219,12 +219,12 @@ flake8 src/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+## 📄 라이선스
+
+이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
 
 ##  문의
 
-- **프로젝트**: [GitHub Issues](https://github.com/annoeyed/fourti/issues)
-- **이메일**: nykim727@gmail.com
-- **문서**: [Wiki](https://github.com/annoeyed/fourti/wiki)
 
 ##  감사의 말
 
