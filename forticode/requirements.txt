@@ -1,0 +1,36 @@
+# Core dependencies
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.5.0
+python-dotenv==1.0.0
+
+# LLM and AI
+openai==1.3.7
+anthropic==0.7.7
+langchain==0.0.350
+langchain-openai==0.0.2
+langchain-anthropic==0.0.1
+
+# Vector database and embeddings
+faiss-cpu==1.7.4
+chromadb==0.4.18
+sentence-transformers==2.2.2
+
+# Security analysis
+bandit==1.7.5
+semgrep==1.50.0
+
+# Utilities
+requests==2.31.0
+beautifulsoup4==4.12.2
+pandas==2.1.4
+numpy==1.25.2
+
+# Development and testing
+pytest==7.4.3
+black==23.11.0
+flake8==6.1.0
+
+# Web interface
+streamlit==1.28.2
+gradio==4.0.2
