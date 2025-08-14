@@ -10,8 +10,8 @@ from enum import Enum
 import json
 import re
 
-from langchain_openai import ChatOpenAI
-from langchain_anthropic import ChatAnthropic
+from langchain_openai.chat_models import ChatOpenAI
+from langchain_anthropic.chat_models import ChatAnthropicMessages
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -49,7 +49,7 @@ class SecurityAnalysisResult:
     risk_level: SecurityLevel
 
 class LLMSecurityAnalyzer:
-    """LLM 기반 보안 분석기"""
+    """LLM 기반 보안 분석기 - SAST/DAST 도구 없이 LLM이 직접 분석"""
     
     def __init__(self, 
                  openai_api_key: Optional[str] = None,
@@ -66,7 +66,7 @@ class LLMSecurityAnalyzer:
                 temperature=0.1
             )
         elif anthropic_api_key:
-            self.llm = ChatAnthropic(
+            self.llm = ChatAnthropicMessages(
                 model_name="claude-3-opus-20240229",
                 anthropic_api_key=anthropic_api_key,
                 temperature=0.1
@@ -74,16 +74,16 @@ class LLMSecurityAnalyzer:
         else:
             raise ValueError("Either OpenAI or Anthropic API key must be provided")
         
-        # 보안 분석을 위한 시스템 프롬프트
+        # 보안 분석을 위한 시스템 프롬프트 (CVE/CWE 지식 포함)
         self.security_system_prompt = self._create_security_system_prompt()
         
     def _create_security_system_prompt(self) -> str:
-        """보안 분석을 위한 시스템 프롬프트 생성"""
+        """보안 분석을 위한 시스템 프롬프트 생성 - CVE/CWE 지식 포함"""
         return """당신은 20년 경력의 시니어 보안 아키텍트입니다. 
-OWASP Top 10, CWE/SANS Top 25를 완벽하게 이해하고 있으며, 
+OWASP Top 10, CWE/SANS Top 25, 최신 CVE 보고서를 완벽하게 이해하고 있으며, 
 코드의 효율성보다 안정성과 보안을 최우선으로 고려합니다.
 
-주요 보안 취약점 패턴:
+주요 보안 취약점 패턴 (CWE 기준):
 1. CWE-79 (XSS): 사용자 입력 검증 부족, 출력 인코딩 미적용
 2. CWE-89 (SQL Injection): 사용자 입력을 SQL에 직접 삽입
 3. CWE-200 (Information Exposure): 민감한 정보 노출
@@ -92,49 +92,36 @@ OWASP Top 10, CWE/SANS Top 25를 완벽하게 이해하고 있으며,
 6. CWE-434 (Unrestricted Upload): 무제한 파일 업로드
 7. CWE-287 (Authentication Bypass): 인증 우회
 8. CWE-311 (Missing Encryption): 암호화 부족
+9. CWE-400 (Uncontrolled Resource Consumption): 리소스 소모 공격
+10. CWE-502 (Deserialization of Untrusted Data): 신뢰할 수 없는 데이터 역직렬화
 
 분석 시 다음을 고려하세요:
 - 입력 검증 및 이스케이핑
 - 인증 및 권한 관리
 - 데이터 암호화 및 보호
 - 에러 처리 및 로깅
-- 안전한 라이브러리 사용
+- 리소스 제한 및 제어
+- 신뢰할 수 없는 데이터 처리
 
-JSON 형식으로 응답하세요:
-{
-    "issues": [
-        {
-            "cwe_id": "CWE-79",
-            "severity": "high",
-            "description": "사용자 입력이 HTML에 직접 삽입되어 XSS 공격 가능",
-            "line_number": 15,
-            "code_snippet": "user_input",
-            "risk_score": 9.0,
-            "mitigation": "html.escape() 사용하여 입력 이스케이핑",
-            "confidence": 0.95
-        }
-    ],
-    "overall_score": 7.5,
-    "recommendations": ["입력 검증 강화", "출력 인코딩 적용"],
-    "risk_level": "medium"
-}"""
+LLM이 직접 코드를 읽고 보안 취약점을 분석하세요. 
+SAST/DAST 도구 없이 의미론적 분석을 수행하세요."""
 
     def analyze_code(self, 
                     code: str, 
                     language: str = "python",
                     context: str = "") -> SecurityAnalysisResult:
-        """코드 보안 분석 수행"""
+        """LLM이 직접 코드 보안 분석 수행 - SAST/DAST 도구 없이"""
         try:
             # 컨텍스트 정보와 함께 분석 프롬프트 생성
             analysis_prompt = self._create_analysis_prompt(code, language, context)
             
-            # LLM을 통한 분석 수행
+            # LLM을 통한 직접 보안 분석 수행
             response = self.llm.invoke([
                 SystemMessage(content=self.security_system_prompt),
                 HumanMessage(content=analysis_prompt)
             ])
             
-            # 응답 파싱 및 결과 생성
+            # LLM 응답을 구조화된 보안 분석 결과로 변환
             analysis_result = self._parse_llm_response(response.content)
             
             # CWE 데이터베이스와 연동하여 상세 정보 보강
@@ -143,13 +130,13 @@ JSON 형식으로 응답하세요:
             return enriched_result
             
         except Exception as e:
-            logger.error(f"Error during security analysis: {e}")
+            logger.error(f"Error during LLM-based security analysis: {e}")
             return self._create_error_result(str(e))
     
     def _create_analysis_prompt(self, code: str, language: str, context: str) -> str:
-        """분석을 위한 프롬프트 생성"""
+        """LLM이 직접 보안 분석을 수행할 수 있는 상세한 프롬프트 생성"""
         prompt = f"""
-다음 {language} 코드의 보안 취약점을 분석해주세요:
+당신은 보안 전문가입니다. 다음 {language} 코드를 직접 읽고 보안 취약점을 분석해주세요.
 
 코드:
 ```{language}
@@ -158,7 +145,42 @@ JSON 형식으로 응답하세요:
 
 컨텍스트: {context if context else "웹 애플리케이션"}
 
-위 코드에서 발견되는 모든 보안 취약점을 식별하고, 각각에 대해 CWE ID, 심각도, 설명, 수정 방안을 제시해주세요.
+**분석 요구사항:**
+1. 코드를 라인별로 읽고 각 라인에서 잠재적 보안 문제를 식별하세요
+2. 발견된 각 보안 취약점에 대해 다음 정보를 제공하세요:
+   - CWE ID (예: CWE-79, CWE-89)
+   - 심각도 (critical, high, medium, low, safe)
+   - 구체적인 설명
+   - 해당 라인 번호
+   - 위험도 점수 (1-10)
+   - 구체적인 수정 방안
+   - 신뢰도 (0.1-1.0)
+
+3. 전체 코드의 보안 점수 (0-100)를 계산하세요
+4. 전반적인 위험 수준을 평가하세요
+5. 보안 강화를 위한 구체적인 권장사항을 제시하세요
+
+**중요:** SAST/DAST 도구 없이 LLM이 직접 의미론적으로 분석하세요.
+코드의 맥락과 비즈니스 로직을 이해하여 실제 보안 위험을 평가하세요.
+
+JSON 형식으로 응답하세요:
+{{
+    "issues": [
+        {{
+            "cwe_id": "CWE-79",
+            "severity": "high",
+            "description": "구체적인 보안 문제 설명",
+            "line_number": 15,
+            "code_snippet": "문제가 있는 코드 라인",
+            "risk_score": 8.5,
+            "mitigation": "구체적인 수정 방안",
+            "confidence": 0.9
+        }}
+    ],
+    "overall_score": 75.0,
+    "recommendations": ["구체적인 권장사항"],
+    "risk_level": "medium"
+}}
 """
         return prompt
     
