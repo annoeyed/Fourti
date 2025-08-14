@@ -1,36 +1,43 @@
-# Core dependencies
+# Core dependencies 
 fastapi==0.104.1
 uvicorn==0.24.0
 pydantic==2.5.0
 python-dotenv==1.0.0
 
-# LLM and AI
-openai==1.3.7
-anthropic==0.7.7
+# LLM and AI 
+openai>=1.6.1,<2.0.0
+anthropic>=0.8.0,<0.9.0
 langchain==0.0.350
 langchain-openai==0.0.2
 langchain-anthropic==0.0.1
+langchain-core>=0.1.7,<0.2
 
-# Vector database and embeddings
+# Web interface 
+streamlit==1.28.2
+
+# HTTP requests 
+requests==2.31.0
+
+# HTML parsing 
+beautifulsoup4==4.12.2
+
+# Data processing
+pandas==2.1.4
+numpy==1.25.2
+
+# Vector database and embeddings 
 faiss-cpu==1.7.4
 chromadb==0.4.18
 sentence-transformers==2.2.2
 
-# Security analysis
+# Security analysis tools 
 bandit==1.7.5
 semgrep==1.50.0
 
-# Utilities
-requests==2.31.0
-beautifulsoup4==4.12.2
-pandas==2.1.4
-numpy==1.25.2
-
-# Development and testing
+# Development tools (선택사항)
 pytest==7.4.3
 black==23.11.0
 flake8==6.1.0
 
-# Web interface
-streamlit==1.28.2
+# Additional web tools (향후 확장용)
 gradio==4.0.2

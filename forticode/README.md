@@ -34,6 +34,25 @@ FortiCode는 기존의 SAST/DAST 도구 대신 **LLM(대규모 언어 모델)**�
 
 ### 1. 환경 설정
 
+#### Python 버전 요구사항
+- **Python 3.10.x** 또는 **Python 3.11.x** (권장)
+- Python 3.13은 아직 많은 패키지와 호환되지 않음
+
+#### Conda 환경 설정 (권장)
+```bash
+# 저장소 클론
+git clone <repository-url>
+cd forticode
+
+# Python 3.10 환경 생성 및 활성화
+conda create -n forticode-py310 python=3.10.13 -y
+conda activate forticode-py310
+
+# 의존성 설치
+pip install -r requirements.txt
+```
+
+#### 가상환경 설정 (대안)
 ```bash
 # 저장소 클론
 git clone <repository-url>
@@ -98,7 +117,6 @@ streamlit run streamlit_app.py
 2. **CWE 선택**: 수정할 특정 보안 이슈 선택 (선택사항)
 3. **수정 실행**: "수정 시작" 버튼 클릭
 4. **결과 확인**: 원본 코드와 수정된 코드 비교
-5. **코드 다운로드**: 수정된 코드를 파일로 다운로드
 
 ##  API 엔드포인트
 
@@ -201,9 +219,6 @@ flake8 src/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
 
 ##  문의
 
