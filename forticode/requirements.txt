@@ -1,39 +1,38 @@
-# Core dependencies 
+# Core
 fastapi==0.104.1
 uvicorn==0.24.0
-pydantic==2.5.0
+pydantic>=2.7,<3.0
+pydantic-settings>=2.7,<3.0
 python-dotenv==1.0.0
 
-# LLM and AI 
-openai>=1.6.1,<2.0.0
-anthropic>=0.8.0,<0.9.0
-langchain==0.0.350
-langchain-openai==0.0.2
-langchain-anthropic==0.0.1
-langchain-core>=0.1.7,<0.2
+# LLM & LangChain (modern 0.3.x line)
+openai>=1.86.0,<2.0.0
+anthropic>=0.64,<1
+langchain>=0.3.0,<0.4.0
+langchain-core>=0.3.0,<0.4.0
+langchain-community>=0.3.0,<0.4.0
+langchain-openai>=0.3.28,<0.4.0
+langchain-anthropic>=0.3.0,<0.4.0
+langchain-huggingface>=0.1.0
 
-# Web interface 
+# Web UI
 streamlit==1.28.2
 
-# HTTP requests 
+# HTTP / Parsing
 requests==2.31.0
-
-# HTML parsing 
 beautifulsoup4==4.12.2
 
-# Data processing
+# Data
 pandas==2.1.4
-numpy==1.25.2
+numpy==1.26.4   # Py3.11/3.12 모두 휠 존재
 
-# Vector database and embeddings (RAG 시스템용)
-faiss-cpu==1.7.4
+# Vector DB / RAG
+faiss-cpu==1.7.4     # 리눅스에서 안정
 chromadb==0.4.18
 sentence-transformers==2.2.2
 
-# Development tools (선택사항)
+# Dev
 pytest==7.4.3
 black==23.11.0
 flake8==6.1.0
-
-# Additional web tools (향후 확장용)
 gradio==4.0.2
