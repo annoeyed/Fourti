@@ -49,7 +49,9 @@ conda create -n forticode-py310 python=3.10.13 -y
 conda activate forticode-py310
 
 # 의존성 설치
-pip install -r requirements.txt
+conda install -c conda-forge --file requirements.txt
+# 또는 pip 사용
+# pip install -r requirements.txt
 ```
 
 #### 가상환경 설정 (대안)
@@ -81,14 +83,14 @@ ANTHROPIC_API_KEY=your_anthropic_api_key_here
 
 #### API 서버 실행
 ```bash
-cd src/api
+cd backend/api
 python main.py
 ```
 서버는 `http://localhost:8000`에서 실행됩니다.
 
 #### 웹 인터페이스 실행
 ```bash
-cd src/web
+cd backend/web
 streamlit run streamlit_app.py
 ```
 웹 앱은 `http://localhost:8501`에서 실행됩니다.
