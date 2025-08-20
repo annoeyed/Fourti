@@ -1,232 +1,241 @@
-#  FortiCode - LLM 기반 보안 코드 분석기
+# FortiCode - LLM RAG 기반 보안 패치 생성 시스템
 
-**개발 속도를 저해하지 않으면서 코드의 보안성을 근본적으로 강화하는 솔루션**
+FortiCode는 LLM(대규모 언어 모델)과 RAG(Retrieval-Augmented Generation) 기술을 활용하여 보안 취약점을 자동으로 탐지하고 수정 패치를 생성하는 AI 기반 보안 코딩 시스템입니다.
 
-##  프로젝트 개요
+##  핵심 기능
 
-FortiCode는 기존의 SAST/DAST 도구 대신 **LLM(대규모 언어 모델)** 을 활용하여 코드의 보안 취약점을 분석하고, 안전한 코드를 생성하는 혁신적인 보안 도구입니다.
+### 1. LLM 기반 보안 분석
+- **AI 보안 분석기**: OpenAI GPT와 Anthropic Claude를 활용한 코드 취약점 탐지
+- **자동 패치 생성**: 발견된 보안 이슈에 대한 구체적인 수정 코드 자동 생성
+- **다국어 지원**: Python, Java, C++, JavaScript, PHP, Ruby, Go, Rust 등 다양한 프로그래밍 언어 지원
 
-###  핵심 특징
+### 2. RAG 기반 컨텍스트 검색
+- **CWE 데이터베이스**: Common Weakness Enumeration 데이터베이스와 연동
+- **OWASP 치트시트**: 실용적인 보안 가이드 및 모범 사례 검색
+- **FAISS 벡터 검색**: 고성능 유사도 검색을 통한 관련 보안 정보 수집
 
-- **LLM 기반 분석**: GPT-4, Claude 등 최신 AI 모델을 활용한 지능형 보안 분석
-- **CWE 데이터베이스**: OWASP Top 10, CWE/SANS Top 25 기반의 포괄적인 취약점 정보
-- **실시간 분석**: 개발 중인 코드에 대한 즉시 보안 피드백
-- **자동 수정**: 발견된 보안 취약점에 대한 자동 수정 제안
-- **웹 인터페이스**: 사용자 친화적인 Streamlit 기반 웹 애플리케이션
-- **API 서버**: FastAPI 기반의 확장 가능한 백엔드 서비스
+### 3. GitHub 자동 패치 적용
+- **자동 브랜치 생성**: 보안 패치를 위한 새로운 브랜치 자동 생성
+- **코드 자동 수정**: GitHub API를 통한 파일 내용 자동 업데이트
+- **Pull Request 생성**: 수정된 코드에 대한 자동 PR 생성
 
 ##  시스템 아키텍처
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Web Interface │    │   API Server    │    │  LLM Services  │
-│   (Streamlit)   │◄──►│   (FastAPI)     │◄──►│  (OpenAI/Claude)│
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │
-                                ▼
-                       ┌─────────────────┐
-                       │  CWE Database   │
-                       │   (JSON/Vector) │
-                       └─────────────────┘
+사용자 코드 입력
+        ↓
+   LLM 보안 분석
+        ↓
+   RAG 컨텍스트 검색
+        ↓
+   보안 패치 생성
+        ↓
+   GitHub 자동 적용
+        ↓
+   Pull Request 생성
+```
+
+##  프로젝트 구조
+
+### LLM 모듈 (`backend/llm/`)
+```
+backend/llm/
+├── __init__.py
+├── patch_generator.py          # AI 기반 보안 패치 생성기
+├── README_TESTING.md           # 테스트 가이드
+└── faiss_unified_index/       # 통합 FAISS 인덱스
+    ├── index.faiss            # 벡터 인덱스 파일
+    └── index.pkl              # 메타데이터 파일
+```
+
+### RAG 모듈 (`backend/rag/`)
+```
+backend/rag/
+├── __init__.py
+├── rag_builder.py             # RAG 시스템 구축 및 관리
+├── rag_search_adapter.py      # 검색 인터페이스
+├── faiss_unified_index/       # 통합 FAISS 인덱스
+│   ├── index.faiss            # 벡터 인덱스 파일
+│   └── index.pkl              # 메타데이터 파일
+└── cwe_seeds/                 # CWE 시드 데이터
+    ├── python.json            # Python 관련 CWE
+    ├── java.json              # Java 관련 CWE
+    ├── cpp.json               # C++ 관련 CWE
+    ├── javascript.json        # JavaScript 관련 CWE
+    ├── php.json               # PHP 관련 CWE
+    ├── ruby.json              # Ruby 관련 CWE
+    ├── go.json                # Go 관련 CWE
+    ├── rust.json              # Rust 관련 CWE
+    ├── c.json                 # C 관련 CWE
+    └── web.json               # 웹 보안 관련 CWE
+```
+
+### GitHub 패치 생성기
+```
+forticode/
+├── github_patch_creator.py    # GitHub 자동 패치 생성 및 적용
+└── apply_patches.py           # 패치 적용 유틸리티
 ```
 
 ##  빠른 시작
 
 ### 1. 환경 설정
-
-#### Python 버전 요구사항
-- **Python 3.10.x** 또는 **Python 3.11.x** (권장)
-- Python 3.13은 아직 많은 패키지와 호환되지 않음
-
-#### Conda 환경 설정 (권장)
 ```bash
-# 저장소 클론
-git clone <repository-url>
-cd forticode
-
-# Python 3.10 환경 생성 및 활성화
-conda create -n forticode-py310 python=3.10.13 -y
-conda activate forticode-py310
-
-# 의존성 설치
-pip install -r requirements.txt
-```
-
-#### 가상환경 설정 (대안)
-```bash
-# 저장소 클론
-git clone <repository-url>
-cd forticode
-
-# Python 가상환경 생성 및 활성화
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# Conda 환경 생성 및 활성화
+conda create -n forticode python=3.9
+conda activate forticode
 
 # 의존성 설치
 pip install -r requirements.txt
 ```
 
 ### 2. 환경 변수 설정
-
 ```bash
-# .env 파일 생성
-cp env.example .env
-
-# API 키 설정
-OPENAI_API_KEY=your_openai_api_key_here
-ANTHROPIC_API_KEY=your_anthropic_api_key_here
+export OPENAI_API_KEY="your_openai_api_key"
+export ANTHROPIC_API_KEY="your_anthropic_api_key"
+export GITHUB_TOKEN="your_github_personal_access_token"
 ```
 
-### 3. 서비스 실행
-
-#### API 서버 실행
+### 3. LLM RAG 시스템 테스트
 ```bash
-cd src/api
-python main.py
+cd backend/security/analysis
+python test_llm_rag_pipeline.py
 ```
-서버는 `http://localhost:8000`에서 실행됩니다.
 
-#### 웹 인터페이스 실행
+### 4. GitHub 패치 생성기 실행
 ```bash
-cd src/web
-streamlit run streamlit_app.py
-```
-웹 앱은 `http://localhost:8501`에서 실행됩니다.
-
-##  사용 방법
-
-###  코드 보안 분석
-
-1. **코드 입력**: 분석하고 싶은 코드를 텍스트 영역에 입력
-2. **언어 선택**: Python, JavaScript, Java 등 프로그래밍 언어 선택
-3. **컨텍스트 설정**: 웹 애플리케이션, API 서버 등 컨텍스트 정보 입력
-4. **분석 실행**: "분석 시작" 버튼 클릭
-5. **결과 확인**: 보안 점수, 발견된 이슈, 수정 방안 등 상세 결과 확인
-
-###  보안 코드 생성
-
-1. **요구사항 입력**: 구현하고 싶은 기능을 자연어로 설명
-2. **언어 선택**: 생성할 코드의 프로그래밍 언어 선택
-3. **보안 원칙 선택**: 적용할 보안 요구사항 선택
-4. **코드 생성**: "코드 생성" 버튼 클릭
-5. **결과 확인**: 보안을 고려한 안전한 코드 자동 생성
-
-###  취약점 자동 수정
-
-1. **코드 입력**: 수정이 필요한 코드 입력
-2. **CWE 선택**: 수정할 특정 보안 이슈 선택 (선택사항)
-3. **수정 실행**: "수정 시작" 버튼 클릭
-4. **결과 확인**: 원본 코드와 수정된 코드 비교
-
-##  API 엔드포인트
-
-### 코드 분석
-```http
-POST /analyze
-Content-Type: application/json
-
-{
-  "code": "your_code_here",
-  "language": "python",
-  "context": "web_application"
-}
+python github_patch_creator.py
 ```
 
-### 코드 생성
-```http
-POST /generate
-Content-Type: application/json
+##  사용 예시
 
-{
-  "description": "user_login_api_with_jwt",
-  "language": "python",
-  "security_requirements": ["OWASP Top 10 준수", "입력 검증 강화"]
-}
+### LLM 보안 분석 및 패치 생성
+```python
+from backend.llm.patch_generator import SecurityPatchGenerator
+from backend.rag.rag_search_adapter import RAGSearchAdapter
+
+# RAG 검색 어댑터 초기화
+rag_adapter = RAGSearchAdapter()
+
+# 보안 패치 생성기 초기화
+patch_generator = SecurityPatchGenerator(
+    openai_api_key="your_openai_key",
+    anthropic_api_key="your_anthropic_key"
+)
+
+# 취약한 코드 예시
+vulnerable_code = '''
+def get_user_data(user_id):
+    query = f"SELECT * FROM users WHERE id = {user_id}"
+    cursor.execute(query)
+    return cursor.fetchone()
+'''
+
+# RAG를 통한 컨텍스트 검색
+context = rag_adapter.search_relevant_context(
+    query="SQL injection vulnerability",
+    language="python"
+)
+
+# AI 기반 패치 생성
+patch = patch_generator.generate_security_patch(
+    code=vulnerable_code,
+    vulnerability_type="SQL_INJECTION",
+    language="python",
+    context=context
+)
+
+print("생성된 패치:")
+print(patch['secure_code'])
 ```
 
-### 취약점 수정
-```http
-POST /fix
-Content-Type: application/json
+### GitHub 자동 패치 적용
+```python
+from github_patch_creator import GitHubPatchCreator
 
-{
-  "code": "vulnerable_code_here",
-  "language": "python",
-  "cwe_ids": ["CWE-79", "CWE-89"]
-}
+# GitHub 패치 생성기 초기화
+patcher = GitHubPatchCreator(
+    token=os.getenv('GITHUB_TOKEN'),
+    repo_owner="your_username",
+    repo_name="your_repository"
+)
+
+# 새 브랜치 생성
+branch_name = patcher.create_branch()
+
+# 보안 패치 적용
+result = patcher.apply_security_patches(
+    secure_code_file="vulnbank_secure_code_generated.json",
+    branch=branch_name
+)
+
+# Pull Request 생성
+if result['applied_count'] > 0:
+    pr_url = patcher.create_pull_request(
+        title="보안 취약점 자동 패치 적용",
+        body="FortiCode를 통해 자동 생성된 보안 패치",
+        head_branch=branch_name
+    )
+    print(f"Pull Request 생성됨: {pr_url}")
 ```
 
-### CWE 정보 조회
-```http
-GET /cwe/{cwe_id}
-GET /cwe/search/{query}
-GET /cwe/list
-```
+##  주요 컴포넌트
 
-##  지원하는 보안 취약점
+### 1. SecurityPatchGenerator (`backend/llm/patch_generator.py`)
+- **기능**: AI 모델을 활용한 보안 패치 자동 생성
+- **지원 모델**: OpenAI GPT-4, Anthropic Claude
+- **출력**: 취약한 코드와 안전한 코드 쌍, 수정 설명
 
-| CWE ID | 이름 | 설명 | 위험도 |
-|---------|------|------|--------|
-| CWE-79 | Cross-site Scripting (XSS) | 사용자 입력 검증 부족 | 🔴 High |
-| CWE-89 | SQL Injection | SQL 쿼리 주입 공격 | 🔴 High |
-| CWE-200 | Information Exposure | 민감한 정보 노출 | 🟡 Medium |
-| CWE-22 | Path Traversal | 경로 조작 공격 | 🟡 Medium |
-| CWE-78 | OS Command Injection | OS 명령어 주입 | 🔴 High |
-| CWE-434 | Unrestricted Upload | 무제한 파일 업로드 | 🟡 Medium |
-| CWE-287 | Authentication Bypass | 인증 우회 | 🔴 High |
-| CWE-311 | Missing Encryption | 암호화 부족 | 🟡 Medium |
+### 2. RAGSearchAdapter (`backend/rag/rag_search_adapter.py`)
+- **기능**: FAISS 벡터 검색을 통한 관련 보안 정보 검색
+- **검색 소스**: CWE 데이터베이스, OWASP 치트시트
+- **출력**: 검색된 보안 컨텍스트 및 관련 문서
 
-##  테스트
+### 3. RAGBuilder (`backend/rag/rag_builder.py`)
+- **기능**: RAG 시스템 구축 및 인덱스 관리
+- **벡터화**: 텍스트를 고차원 벡터로 변환
+- **인덱싱**: FAISS를 통한 고성능 검색 인덱스 생성
 
-```bash
-# 테스트 실행
-pytest tests/
+### 4. GitHubPatchCreator (`github_patch_creator.py`)
+- **기능**: GitHub 저장소에 보안 패치 자동 적용
+- **API 연동**: GitHub REST API를 통한 저장소 관리
+- **자동화**: 브랜치 생성, 파일 수정, PR 생성
 
-# 코드 품질 검사
-black src/
-flake8 src/
-```
+##  데이터 흐름
 
-##  성능 지표
+1. **코드 입력**: 사용자가 분석할 코드 입력
+2. **LLM 분석**: AI 모델이 코드의 보안 취약점 탐지
+3. **RAG 검색**: 관련 CWE 및 OWASP 정보 검색
+4. **컨텍스트 융합**: 검색된 정보와 코드 분석 결과 결합
+5. **패치 생성**: AI가 안전한 코드로 수정된 버전 생성
+6. **GitHub 적용**: 생성된 패치를 GitHub 저장소에 자동 적용
+7. **PR 생성**: 수정된 코드에 대한 Pull Request 자동 생성
 
-- **분석 정확도**: 90%+ (LLM 기반 의미론적 분석)
-- **응답 시간**: 평균 3-5초 (코드 복잡도에 따라 변동)
-- **지원 언어**: Python, JavaScript, Java, C#, PHP, Go, Rust
-- **CWE 커버리지**: OWASP Top 10 + SANS Top 25
+##  보안 기능
 
-##  향후 계획
+- **토큰 보안**: GitHub 토큰을 환경 변수로 관리
+- **입력 검증**: 사용자 입력의 안전성 검증
+- **API 보안**: GitHub API 요청에 대한 적절한 인증 및 권한 관리
+- **에러 처리**: 민감한 정보 노출을 방지하는 안전한 에러 처리
 
-### Phase 1 (현재)
--  기본 LLM 기반 보안 분석
--  CWE 데이터베이스 구축
--  웹 인터페이스 구현
+##  관련 문서
 
-### Phase 2 (3-6개월)
--  CI/CD 파이프라인 통합
--  IDE 플러그인 개발
--  다국어 지원 확장
-
-### Phase 3 (6-12개월)
--  자율 보안 에이전트
--  실시간 위협 탐지
--  클라우드 네이티브 보안
+- **API 계약**: `backend/API_CONTRACT.md`
+- **테스트 가이드**: `backend/llm/README_TESTING.md`
+- **보안 워크플로우**: `backend/security/analysis/README_VULNTEST.md`
 
 ##  기여하기
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
+##  라이선스
 
-##  감사의 말
-
-- OWASP Foundation
-- MITRE Corporation (CWE)
-- OpenAI & Anthropic
-- LangChain & Streamlit 커뮤니티
+이 프로젝트는 MIT 라이선스 하에 배포됩니다.
 
 ---
 
-**FortiCode** - 개발 속도와 보안의 완벽한 조화를 위한 AI 기반 솔루션 
+**FortiCode** - AI 기반 보안 코딩으로 더 안전한 소프트웨어를 만들어갑니다! 🔒✨ 
