@@ -1,0 +1,82 @@
+[
+  {
+    "title": "SQL Injection Prevention",
+    "content": "SQL injection attacks occur when untrusted data is sent to an interpreter as part of a command or query. The attacker's hostile data can trick the interpreter into executing unintended commands or accessing data without proper authorization. To prevent SQL injection, use parameterized queries, stored procedures, or an ORM framework. Never concatenate user input directly into SQL queries.",
+    "source": "OWASP",
+    "languages": ["python", "java", "javascript", "php", "csharp"],
+    "technologies": ["sql", "database", "orm"],
+    "languages_inferred": ["python", "java", "javascript"],
+    "security_category": "injection",
+    "file_path": "owasp_cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.md"
+  },
+  {
+    "title": "Cross-Site Scripting (XSS) Prevention",
+    "content": "XSS attacks inject malicious scripts into web pages viewed by other users. These attacks can steal cookies, session tokens, or other sensitive information. To prevent XSS, validate and sanitize all user input, use output encoding, implement Content Security Policy (CSP) headers, and avoid using dangerous functions like eval() or innerHTML with user input.",
+    "source": "OWASP",
+    "languages": ["javascript", "python", "php", "java"],
+    "technologies": ["web", "browser", "dom"],
+    "languages_inferred": ["javascript", "python"],
+    "security_category": "xss",
+    "file_path": "owasp_cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.md"
+  },
+  {
+    "title": "Cross-Site Request Forgery (CSRF) Prevention",
+    "content": "CSRF attacks force authenticated users to perform unwanted actions on a web application. Attackers can trick users into submitting forms or making requests to the application. To prevent CSRF, implement CSRF tokens, use SameSite cookie attributes, validate the Origin and Referer headers, and implement proper session management.",
+    "source": "OWASP",
+    "languages": ["python", "java", "javascript", "php"],
+    "technologies": ["web", "session", "cookies"],
+    "languages_inferred": ["python", "java"],
+    "security_category": "csrf",
+    "file_path": "owasp_cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.md"
+  },
+  {
+    "title": "File Upload Security",
+    "content": "File upload vulnerabilities allow attackers to upload malicious files that can lead to remote code execution, server compromise, or data theft. To secure file uploads, validate file types using both extension and content checking, scan files for malware, store uploads outside the web root, use random file names, and implement proper access controls.",
+    "source": "OWASP",
+    "languages": ["python", "php", "java", "javascript"],
+    "technologies": ["file_system", "web", "storage"],
+    "languages_inferred": ["python", "php"],
+    "security_category": "file_upload",
+    "file_path": "owasp_cheatsheets/File_Upload_Cheat_Sheet.md"
+  },
+  {
+    "title": "Authentication Security",
+    "content": "Weak authentication mechanisms can lead to unauthorized access to applications and data. Implement strong password policies, use secure session management, implement multi-factor authentication, protect against brute force attacks with rate limiting, and use secure password hashing algorithms like bcrypt, Argon2, or PBKDF2.",
+    "source": "OWASP",
+    "languages": ["python", "java", "php", "javascript"],
+    "technologies": ["authentication", "session", "cryptography"],
+    "languages_inferred": ["python", "java"],
+    "security_category": "authentication",
+    "file_path": "owasp_cheatsheets/Authentication_Cheat_Sheet.md"
+  },
+  {
+    "title": "Input Validation and Sanitization",
+    "content": "Input validation ensures that only properly formatted data enters the application, while sanitization removes or encodes potentially dangerous characters. Always validate input on both client and server side, use whitelist validation, implement proper error handling, and avoid using dangerous functions that can execute code or access the file system.",
+    "source": "OWASP",
+    "languages": ["python", "java", "php", "javascript", "csharp"],
+    "technologies": ["web", "api", "database"],
+    "languages_inferred": ["python", "java"],
+    "security_category": "input_validation",
+    "file_path": "owasp_cheatsheets/Input_Validation_Cheat_Sheet.md"
+  },
+  {
+    "title": "Secure Coding Practices for Python",
+    "content": "Python applications can be vulnerable to various security issues including code injection, insecure deserialization, and information disclosure. Use virtual environments, keep dependencies updated, avoid using eval() and exec(), implement proper input validation, use secure random number generators, and follow the principle of least privilege.",
+    "source": "OWASP",
+    "languages": ["python"],
+    "technologies": ["python", "web", "api"],
+    "languages_inferred": ["python"],
+    "security_category": "python_security",
+    "file_path": "owasp_cheatsheets/Python_Security_Cheat_Sheet.md"
+  },
+  {
+    "title": "API Security Best Practices",
+    "content": "APIs are common attack vectors for modern applications. Implement proper authentication and authorization, use HTTPS/TLS, validate all input parameters, implement rate limiting, use API keys or OAuth tokens, log and monitor API usage, and implement proper error handling without exposing sensitive information.",
+    "source": "OWASP",
+    "languages": ["python", "java", "javascript", "php"],
+    "technologies": ["api", "rest", "graphql", "web"],
+    "languages_inferred": ["python", "java"],
+    "security_category": "api_security",
+    "file_path": "owasp_cheatsheets/API_Security_Cheat_Sheet.md"
+  }
+]
